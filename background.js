@@ -18,8 +18,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.identity.getAuthToken({ 'interactive': true }, async (token) => {
     const resp = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`);
     const json = await resp.json();
-    firstName = json.given_name.toLowerCase();
-    console.log('Got', firstName)
+    if (!json.given_name) {
+      console.error('No name found');
+    } else {
+      firstName = json.given_name.toLowerCase();
+      console.log('Got', firstName)
+    }
   });
 
   let lastPlayed = undefined;
@@ -29,13 +33,15 @@ chrome.runtime.onInstalled.addListener(async () => {
     const isLate = hour >= 0 && hour < 5;
     const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
     const randomChance = Math.random() < 0.2;
+    const hasName = !!firstName;
 
-    const shouldPlay = randomChance && isLate && !playedRecently;
+    const shouldPlay = hasName && randomChance && isLate && !playedRecently;
 
     console.log({
       isLate,
       playedRecently,
       randomChance,
+      hasName,
       shouldPlay,
     });
 
@@ -45,9 +51,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
     const { tabId, windowId } = activeInfo;
     console.log('activated', windowId, tabId);
-    if (lastPlayed || !firstName) {
-      return;
-    }
     setTimeout(async () => {
       console.log('--> playing');
       lastPlayed = new Date();
