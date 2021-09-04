@@ -1,0 +1,19 @@
+{
+  "name": "Whispers",
+  "version": "1.0",
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjcOAEziFufGu7b9hykXRaNRM/9iUTK0OrQ3FOI0EepTOAxfc8L+uByz5ztBXXCp9exl5q1AhDBAcMtBcxnBXT38cO1bBdxu49+TxG8DV7iUlXM/PDu3hS84mQ4AbeZQo2Q/pR8mkEjjJQm+Ih24nBClOnjL2Ag6nbnpq1VnS3/6+UpKCuIg6tSk/6PdoQI82JfZ4nvncjhKmc9kxzM+5LZIv+GXljtL6m+qHrjaL8P2cOK90DP78psXMXMy+iaJKTbn06crvTGkqjSxOmyrvbI4yKUx58HGr19X4anM3mU8DVfBkPxgWhsYjYYqdnvHgqpOuKjFB+rN8au5Hw1ueMQIDAQAB",
+  "oauth2": {
+    "client_id": "1031812871754-s1v6ugn3hbicarv356q3dkpg2ba14v95.apps.googleusercontent.com",
+    "scopes": [
+      "profile"
+    ]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "permissions": [
+    "identity"
+  ]
+}
