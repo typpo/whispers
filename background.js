@@ -1,6 +1,6 @@
 const createAudioWindow = async (name) => {
-  let url = chrome.runtime.getURL(`audio.html?${name}`);
-  ({ id } = await chrome.windows.create({
+  const url = chrome.runtime.getURL(`audio.html?${name}`);
+  const { id } = await chrome.windows.create({
     type: 'popup',
     focused: false,
     top: 1,
@@ -8,7 +8,7 @@ const createAudioWindow = async (name) => {
     height: 1,
     width: 1,
     url,
-  }));
+  });
   await chrome.windows.update(id, { focused: false });
   return id;
 };
@@ -53,11 +53,11 @@ chrome.runtime.onInstalled.addListener(async () => {
     console.log('activated', windowId, tabId);
     setTimeout(async () => {
       console.log('--> playing');
-      lastPlayed = new Date();
       const popupId = await createAudioWindow(firstName);
       setTimeout(async () => {
         await chrome.windows.remove(popupId);
       }, 3000);
     }, 3000);
+    lastPlayed = new Date();
   });
 });
