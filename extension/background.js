@@ -29,8 +29,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 let lastPlayed = undefined;
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  // const hour = new Date().getHours();
-  const hour = 3;
+  const hour = new Date().getHours();
   const isLate = hour >= 0 && hour < 5;
   const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
   const randomChance = Math.random() < 0.2;
