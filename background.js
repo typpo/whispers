@@ -1,4 +1,4 @@
-const createAudioWindow = async (name) => {
+async function createAudioWindow(name) {
   const url = chrome.runtime.getURL(`audio.html?${name}`);
   const { id } = await chrome.windows.create({
     type: 'popup',
@@ -11,10 +11,10 @@ const createAudioWindow = async (name) => {
   });
   await chrome.windows.update(id, { focused: false });
   return id;
-};
+}
 
+let firstName = undefined;
 chrome.runtime.onInstalled.addListener(async () => {
-  let firstName = undefined;
   chrome.identity.getAuthToken({ 'interactive': true }, async (token) => {
     const resp = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`);
     const json = await resp.json();
@@ -25,39 +25,38 @@ chrome.runtime.onInstalled.addListener(async () => {
       console.log('Got', firstName)
     }
   });
+});
 
-  let lastPlayed = undefined;
-  chrome.tabs.onActivated.addListener(async (activeInfo) => {
-    //const hour = new Date().getHours();
-    const hour = 3;
-    const isLate = hour >= 0 && hour < 5;
-    const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
-    const randomChance = Math.random() < 0.2;
-    const hasName = !!firstName;
+let lastPlayed = undefined;
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  const hour = new Date().getHours();
+  const isLate = hour >= 0 && hour < 5;
+  const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
+  const randomChance = Math.random() < 0.2;
+  const hasName = !!firstName;
 
-    const shouldPlay = hasName && randomChance && isLate && !playedRecently;
+  const shouldPlay = hasName && randomChance && isLate && !playedRecently;
 
-    console.log({
-      isLate,
-      playedRecently,
-      randomChance,
-      hasName,
-      shouldPlay,
-    });
-
-    if (!shouldPlay) {
-      return;
-    }
-
-    const { tabId, windowId } = activeInfo;
-    console.log('activated', windowId, tabId);
-    setTimeout(async () => {
-      console.log('--> playing');
-      const popupId = await createAudioWindow(firstName);
-      setTimeout(async () => {
-        await chrome.windows.remove(popupId);
-      }, 3000);
-    }, 3000);
-    lastPlayed = new Date();
+  console.log({
+    isLate,
+    playedRecently,
+    randomChance,
+    hasName,
+    shouldPlay,
   });
+
+  if (!shouldPlay) {
+    return;
+  }
+
+  const { tabId, windowId } = activeInfo;
+  console.log('activated', windowId, tabId);
+  setTimeout(async () => {
+    console.log('--> playing');
+    const popupId = await createAudioWindow(firstName);
+    setTimeout(async () => {
+      await chrome.windows.remove(popupId);
+    }, 3000);
+  }, 3000);
+  lastPlayed = new Date();
 });
