@@ -10,5 +10,4 @@ function playName(name) {
   });
 }
 
-//playName(window.location.search.slice(1));
-playName('ezekiel');
+playName(window.location.search.slice(1));
