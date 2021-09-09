@@ -8,7 +8,7 @@ A chrome extension that has a small chance to whisper your name very late at nig
 
 1. Record yourself whispering names
 ```
-vim names.py  # add names
+cd audio
 ./record.py
 ./process.sh
 ```
