@@ -37,10 +37,12 @@ chrome.runtime.onMessage.addListener(message => {
   }
 });
 
-chrome.runtime.onInstalled.addListener(async () => {
-  chrome.storage.local.clear();
-  const url = chrome.runtime.getURL('enter_name.html');
-  nameTab = await chrome.tabs.create({ url });
+chrome.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === 'install') {
+    chrome.storage.local.clear();
+    const url = chrome.runtime.getURL('enter_name.html');
+    nameTab = await chrome.tabs.create({ url });
+  }
 });
 
 let lastPlayed = undefined;
