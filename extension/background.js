@@ -56,7 +56,7 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const hour = new Date().getHours();
   const isLate = hour >= 0 && hour < 5;
   const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
-  const randomChance = Math.random() < 0.2;
+  const randomChance = Math.random() < 0.1;
   const hasName = !!(await getFirstName());
 
   const shouldPlay = hasName && randomChance && isLate && !playedRecently;
