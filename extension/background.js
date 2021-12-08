@@ -26,6 +26,24 @@ function setFirstName(firstName) {
   console.log('Set name to', firstName);
 }
 
+function getLastPlayed() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(['lastPlayedTimestamp'], function(result) {
+      const timestamp = result.lastPlayedTimestamp;
+      if (!timestamp) {
+        resolve(null);
+      } else {
+        resolve(new Date(timestamp));
+      }
+    });
+  });
+}
+
+function setLastPlayed(lastPlayed) {
+  chrome.storage.local.set({ lastPlayedTimestamp: lastPlayed.getTime(), });
+  console.log('Set last played timestamp to', lastPlayed.getTime());
+}
+
 let nameTab = undefined;
 
 chrome.runtime.onMessage.addListener(message => {
@@ -45,7 +63,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
-let lastPlayed = undefined;
 let popupId = undefined;
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const { tabId, windowId } = activeInfo;
@@ -53,6 +70,7 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     return;
   }
 
+  const lastPlayed = await getLastPlayed();
   const hour = new Date().getHours();
   const isLate = hour >= 0 && hour < 5;
   const playedRecently = lastPlayed && (new Date() - lastPlayed) < (1000 * 60 * 60 * 24 * 7);
@@ -67,6 +85,7 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     randomChance,
     hasName,
     shouldPlay,
+    lastPlayed,
   });
 
   if (!shouldPlay) {
@@ -81,5 +100,5 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
       await chrome.windows.remove(popupId);
     }, 3000);
   }, 3000);
-  lastPlayed = new Date();
+  setLastPlayed(new Date());
 });
